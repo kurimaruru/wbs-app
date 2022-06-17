@@ -10,4 +10,4 @@ export const store = configureStore({
 
 // issue-1を作成
 // merge request test
-// マージ完了
+// バックマージ練習
