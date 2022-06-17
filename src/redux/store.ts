@@ -11,3 +11,4 @@ export const store = configureStore({
 // issue-1を作成
 // merge request test
 // バックマージ練習
+// プルリク練習
