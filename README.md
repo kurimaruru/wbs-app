@@ -10,3 +10,6 @@ npm install
 npm run start
 ```
 ブラウザでReactアプリが表示されればOK
+
+### 技術的な共有事項についてはWikiに記載
+https://github.com/kurimaruru/wbs-app/wiki
