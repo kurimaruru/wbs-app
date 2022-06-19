@@ -10,6 +10,7 @@ import {
 import { Collapse } from '@material-ui/core';
 import { KeyboardArrowUp, KeyboardArrowDown } from '@material-ui/icons';
 import { useState } from 'react';
+import { AccountCircle } from '@material-ui/icons';
 
 type WbsTestData = {
   mainItem: string;
@@ -62,8 +63,13 @@ export const WbsTableBody = ({
         <TableCell align='left'>{wbsTestDatas.delay}</TableCell>
         <TableCell align='left'>{wbsTestDatas.progress}</TableCell>
         <TableCell align='left'>{wbsTestDatas.productionCosts}</TableCell>
-        <TableCell align='right'>{wbsTestDatas.rep}</TableCell>
-        <TableCell align='right'>{wbsTestDatas.state}</TableCell>
+        <TableCell align='right'>
+          <Box style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <AccountCircle />
+            {wbsTestDatas.rep}
+          </Box>
+        </TableCell>
+        <TableCell align='center'>{wbsTestDatas.state}</TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
