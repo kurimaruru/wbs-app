@@ -6,11 +6,16 @@ import {
   TableHead,
   TableRow,
   IconButton,
+  Button,
 } from '@material-ui/core';
 import { Collapse } from '@material-ui/core';
 import { KeyboardArrowUp, KeyboardArrowDown } from '@material-ui/icons';
 import { useState } from 'react';
-import { AccountCircle } from '@material-ui/icons';
+import {
+  AccountCircle,
+  ReplyOutlined,
+  AddCircleOutlineOutlined,
+} from '@material-ui/icons';
 
 type WbsTestData = {
   mainItem: string;
@@ -78,25 +83,38 @@ export const WbsTableBody = ({
               <Table size='small' aria-label='purchases'>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Customer</TableCell>
-                    <TableCell align='left'>Amount</TableCell>
-                    <TableCell align='left'>Total price ($)</TableCell>
+                    <TableCell />
+                    <TableCell style={{ width: '300px' }}>ユーザー</TableCell>
+                    <TableCell style={{ width: '300px' }}>日時</TableCell>
+                    <TableCell style={{ width: '500px' }}>コメント</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {/* {row.history.map((historyRow) => (
-                    <TableRow key={historyRow.date}>
-                      <TableCell component='th' scope='row'>
-                        {historyRow.date}
-                      </TableCell>
-                      <TableCell>{historyRow.customerId}</TableCell>
-                      <TableCell align='left'>{historyRow.amount}</TableCell>
-                      <TableCell align='left'>
-                        {Math.round(historyRow.amount * row.price * 100) / 100}
-                      </TableCell>
-                    </TableRow>
-                  ))} */}
+                  <TableRow style={{ width: '100%' }}>
+                    <TableCell />
+                    <TableCell>田中</TableCell>
+                    <TableCell>06-30 09:00</TableCell>
+                    <TableCell>
+                      進捗に遅れが出ていますが、どう対応しますか？
+                    </TableCell>
+                  </TableRow>
+                  <TableRow style={{ width: '100%' }}>
+                    <TableCell />
+                    <TableCell />
+                    <TableCell align='left'>
+                      <Button>
+                        <AddCircleOutlineOutlined />
+                        コメント追加
+                      </Button>
+                    </TableCell>
+                    <TableCell align='left'>
+                      <Button>
+                        <ReplyOutlined />
+                        返信
+                      </Button>
+                    </TableCell>
+                    <TableCell />
+                  </TableRow>
                 </TableBody>
               </Table>
             </Box>
