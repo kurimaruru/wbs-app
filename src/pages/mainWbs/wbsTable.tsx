@@ -66,7 +66,11 @@ export const WbsTable = ({ wbsTestDatas }: WbsTablePorps): JSX.Element => {
     <Grid container spacing={1}>
       <Grid item xs={12}>
         <TableContainer className={classes.tableContainer}>
-          <Table stickyHeader aria-label='sticky-table'>
+          <Table
+            stickyHeader
+            aria-label='sticky-table'
+            style={{ tableLayout: 'fixed' }}
+          >
             <TableHead>
               <TableRow>
                 <TableCell rowSpan={2} />
