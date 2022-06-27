@@ -7,6 +7,7 @@ import {
   TableRow,
   IconButton,
   Button,
+  Grid,
 } from '@material-ui/core';
 import { Collapse } from '@material-ui/core';
 import { KeyboardArrowUp, KeyboardArrowDown } from '@material-ui/icons';
@@ -77,46 +78,54 @@ export const WbsTableBody = ({
         <TableCell align='center'>{wbsTestDatas.state}</TableCell>
       </TableRow>
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
           <Collapse in={open} timeout='auto' unmountOnExit>
             <Box sx={{ margin: 1 }}>
-              <Table size='small' aria-label='purchases'>
-                <TableHead>
-                  <TableRow>
-                    <TableCell />
-                    <TableCell style={{ width: '300px' }}>ユーザー</TableCell>
-                    <TableCell style={{ width: '300px' }}>日時</TableCell>
-                    <TableCell style={{ width: '500px' }}>コメント</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  <TableRow style={{ width: '100%' }}>
-                    <TableCell />
-                    <TableCell>田中</TableCell>
-                    <TableCell>06-30 09:00</TableCell>
-                    <TableCell>
-                      進捗に遅れが出ていますが、どう対応しますか？
-                    </TableCell>
-                  </TableRow>
-                  <TableRow style={{ width: '100%' }}>
-                    <TableCell />
-                    <TableCell />
-                    <TableCell align='left'>
-                      <Button>
-                        <AddCircleOutlineOutlined />
-                        コメント追加
-                      </Button>
-                    </TableCell>
-                    <TableCell align='left'>
-                      <Button>
-                        <ReplyOutlined />
-                        返信
-                      </Button>
-                    </TableCell>
-                    <TableCell />
-                  </TableRow>
-                </TableBody>
-              </Table>
+              <Grid container>
+                <Grid item xs={12}>
+                  <Table size='small' aria-label='purchases'>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell />
+                        <TableCell style={{ width: '300px' }}>
+                          ユーザー
+                        </TableCell>
+                        <TableCell style={{ width: '300px' }}>日時</TableCell>
+                        <TableCell style={{ width: '500px' }}>
+                          コメント
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      <TableRow style={{ width: '100%' }}>
+                        <TableCell />
+                        <TableCell>田中</TableCell>
+                        <TableCell>06-30 09:00</TableCell>
+                        <TableCell>
+                          進捗に遅れが出ていますが、どう対応しますか？
+                        </TableCell>
+                      </TableRow>
+                      <TableRow style={{ width: '100%' }}>
+                        <TableCell />
+                        <TableCell />
+                        <TableCell align='left'>
+                          <Button>
+                            <AddCircleOutlineOutlined />
+                            コメント追加
+                          </Button>
+                        </TableCell>
+                        <TableCell align='left'>
+                          <Button>
+                            <ReplyOutlined />
+                            返信
+                          </Button>
+                        </TableCell>
+                        <TableCell />
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </Grid>
+              </Grid>
             </Box>
           </Collapse>
         </TableCell>
