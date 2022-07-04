@@ -1,22 +1,36 @@
 import {
   Box,
-  Table,
-  TableBody,
   TableCell,
-  TableHead,
   TableRow,
   IconButton,
+  makeStyles,
   Button,
-  Grid,
 } from '@material-ui/core';
-import { Collapse } from '@material-ui/core';
 import { KeyboardArrowUp, KeyboardArrowDown } from '@material-ui/icons';
 import { useState } from 'react';
-import {
-  AccountCircle,
-  ReplyOutlined,
-  AddCircleOutlineOutlined,
-} from '@material-ui/icons';
+import { AccountCircle } from '@material-ui/icons';
+import { DateTime } from 'luxon';
+import { round } from 'lodash';
+import { WbsCommentTable } from './wbsCommentTable';
+import { WbsEditDialog } from '../../components/dialog/wbsEditDialog';
+import { WbsDeleteDialog } from '../../components/dialog/wbsDeleteDialog';
+
+const useStyles = makeStyles({
+  delay: {
+    fontWeight: 'bold',
+    color: 'red',
+  },
+  finish: {
+    fontWeight: 'bold',
+    color: 'blue',
+  },
+});
+
+type CommentListType = {
+  user: string;
+  createTime: string;
+  comment: string;
+};
 
 type WbsTestData = {
   mainItem: string;
@@ -32,6 +46,7 @@ type WbsTestData = {
   productionCosts: number;
   rep: string;
   state: string;
+  commentList: CommentListType[];
 };
 
 type WbsTableBodyPorps = {
@@ -41,8 +56,47 @@ type WbsTableBodyPorps = {
 export const WbsTableBody = ({
   wbsTestDatas,
 }: WbsTableBodyPorps): JSX.Element => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const classes = useStyles();
   const [open, setOpen] = useState(false);
+  // 現在時刻
+  const [nowTime, setNowTime] = useState(DateTime.now());
+
+  // --------------------------------------------
+  // 編集ダイアログ
+  // --------------------------------------------
+  const [openEdit, setOpenEdit] = useState(false);
+  const openWbsEditDialog = () => {
+    setOpenEdit(true);
+  };
+  const closeWbsEditDialog = () => {
+    setOpenEdit(false);
+  };
+  // --------------------------------------------
+  // 削除ダイアログ
+  // --------------------------------------------
+  const [openDelete, setOpenDelete] = useState(false);
+  const openWbsDeleteDialog = () => {
+    setOpenDelete(true);
+  };
+  const closeWbsDeleteDialog = () => {
+    setOpenDelete(false);
+  };
+
+  const calculateDelay = (planFinishDay: string, resultFinishDay: string) => {
+    let delayDays = '';
+    const finishDay = DateTime.fromSQL(planFinishDay);
+    const delay = nowTime.diff(finishDay, 'days');
+    // 進捗が遅れている場合はその日数を返す
+    if (round(delay.days) !== 0 && !resultFinishDay) {
+      delayDays = round(delay.days).toString();
+      return <span className={classes.delay}>{`${delayDays}日`}</span>;
+    }
+    // 進捗が完了している場合
+    if (resultFinishDay) {
+      return <span className={classes.finish}>完了</span>;
+    }
+    return delayDays;
+  };
 
   return (
     <>
@@ -66,70 +120,46 @@ export const WbsTableBody = ({
         <TableCell align='left'>{wbsTestDatas.resultsStartDay}</TableCell>
         <TableCell align='left'>{wbsTestDatas.resultsDayCount}</TableCell>
         <TableCell align='left'>{wbsTestDatas.resultsFinisyDay}</TableCell>
-        <TableCell align='left'>{wbsTestDatas.delay}</TableCell>
         <TableCell align='left'>{wbsTestDatas.progress}</TableCell>
         <TableCell align='left'>{wbsTestDatas.productionCosts}</TableCell>
-        <TableCell align='right'>
-          <Box style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <TableCell align='left'>
+          <Box style={{ display: 'flex', justifyContent: 'flex-start' }}>
             <AccountCircle />
             {wbsTestDatas.rep}
           </Box>
         </TableCell>
-        <TableCell align='center'>{wbsTestDatas.state}</TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
-          <Collapse in={open} timeout='auto' unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Grid container>
-                <Grid item xs={12}>
-                  <Table size='small' aria-label='purchases'>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell />
-                        <TableCell style={{ width: '300px' }}>
-                          ユーザー
-                        </TableCell>
-                        <TableCell style={{ width: '300px' }}>日時</TableCell>
-                        <TableCell style={{ width: '500px' }}>
-                          コメント
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      <TableRow style={{ width: '100%' }}>
-                        <TableCell />
-                        <TableCell>田中</TableCell>
-                        <TableCell>06-30 09:00</TableCell>
-                        <TableCell>
-                          進捗に遅れが出ていますが、どう対応しますか？
-                        </TableCell>
-                      </TableRow>
-                      <TableRow style={{ width: '100%' }}>
-                        <TableCell />
-                        <TableCell />
-                        <TableCell align='left'>
-                          <Button>
-                            <AddCircleOutlineOutlined />
-                            コメント追加
-                          </Button>
-                        </TableCell>
-                        <TableCell align='left'>
-                          <Button>
-                            <ReplyOutlined />
-                            返信
-                          </Button>
-                        </TableCell>
-                        <TableCell />
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-                </Grid>
-              </Grid>
-            </Box>
-          </Collapse>
+        <TableCell align='left'>
+          {calculateDelay(
+            wbsTestDatas.plansFinishDay,
+            wbsTestDatas.resultsFinisyDay
+          )}
+        </TableCell>
+        <TableCell>
+          <Button
+            color='primary'
+            variant='contained'
+            onClick={openWbsEditDialog}
+          >
+            編集
+          </Button>
+        </TableCell>
+        <TableCell>
+          <Button
+            color='secondary'
+            variant='contained'
+            onClick={openWbsDeleteDialog}
+          >
+            削除
+          </Button>
         </TableCell>
       </TableRow>
+      <WbsCommentTable open={open} commentHist={wbsTestDatas.commentList} />
+      <WbsEditDialog open={openEdit} closeEditDialog={closeWbsEditDialog} />
+      <WbsDeleteDialog
+        open={openDelete}
+        closeDeleteDialog={closeWbsDeleteDialog}
+        mainItem={wbsTestDatas.mainItem}
+      />
     </>
   );
 };
