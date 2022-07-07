@@ -7,6 +7,9 @@ const useStyles = makeStyles({
   },
 });
 
+/**
+ * @returns 操作メニュー
+ */
 export const WbsOperationMenu = (): JSX.Element => {
   const classes = useStyles();
   return (

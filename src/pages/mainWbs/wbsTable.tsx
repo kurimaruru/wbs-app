@@ -52,11 +52,16 @@ type WbsTestData = {
   commentList: CommentListType[];
 };
 
-type WbsTablePorps = {
+/** WbsTableProps */
+type WbsTableProps = {
+  /** wbsに表示するWBSのデータ */
   wbsTestDatas: WbsTestData[];
 };
 
-export const WbsTable = ({ wbsTestDatas }: WbsTablePorps): JSX.Element => {
+/**
+ * @returns wbs一覧
+ */
+export const WbsTable = ({ wbsTestDatas }: WbsTableProps): JSX.Element => {
   const classes = useStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);

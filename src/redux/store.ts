@@ -1,5 +1,5 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import { counterSlice } from './counterSlice';
+import { counterSlice } from './wbsSlice';
 // ルートとなるReducerを作成
 const rootReducer = combineReducers({
   counter: counterSlice.reducer,
