@@ -154,7 +154,11 @@ export const WbsTableBody = ({
         </TableCell>
       </TableRow>
       <WbsCommentTable open={open} commentHist={wbsTestDatas.commentList} />
-      <WbsEditDialog open={openEdit} closeEditDialog={closeWbsEditDialog} />
+      <WbsEditDialog
+        wbsData={wbsTestDatas}
+        open={openEdit}
+        closeEditDialog={closeWbsEditDialog}
+      />
       <WbsDeleteDialog
         open={openDelete}
         closeDeleteDialog={closeWbsDeleteDialog}
