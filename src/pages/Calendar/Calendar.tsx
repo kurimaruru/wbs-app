@@ -7,6 +7,7 @@ export const Calendar = (): JSX.Element => {
     <Grid container>
       <Grid item xs={1}></Grid>
       <Grid item xs={10}>
+        {/* スケジュールカレンダーの表示 */}
         <Scheduler
           locale={ja}
           view='month'
