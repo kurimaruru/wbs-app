@@ -6,7 +6,6 @@ import { RootState } from '../../redux/store';
 import { useSearchParams } from 'react-router-dom';
 
 export const WbsDetail = (): JSX.Element => {
-  const test = useSelector<RootState>((state) => state.counter.value);
   // urlからuserを取得し、Filterをかける。
   const [userParam] = useSearchParams();
   const getUserParams = () => {
