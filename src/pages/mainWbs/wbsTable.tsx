@@ -186,15 +186,15 @@ export const WbsTable = ({ wbsTestDatas }: WbsTableProps): JSX.Element => {
                   状態
                 </TableCell>
                 <TableCell
-                  rowSpan={2}
                   style={{ fontWeight: 'bold' }}
+                  rowSpan={2}
                   align='center'
                 >
                   編集
                 </TableCell>
                 <TableCell
-                  rowSpan={2}
                   style={{ fontWeight: 'bold' }}
+                  rowSpan={2}
                   align='center'
                 >
                   削除

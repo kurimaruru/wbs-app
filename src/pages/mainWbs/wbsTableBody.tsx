@@ -134,7 +134,7 @@ export const WbsTableBody = ({
             wbsTestDatas.resultsFinisyDay
           )}
         </TableCell>
-        <TableCell>
+        <TableCell align='center'>
           <Button
             color='primary'
             variant='contained'
@@ -143,7 +143,7 @@ export const WbsTableBody = ({
             編集
           </Button>
         </TableCell>
-        <TableCell>
+        <TableCell align='center'>
           <Button
             color='secondary'
             variant='contained'

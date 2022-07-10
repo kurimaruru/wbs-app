@@ -11,6 +11,8 @@ import { MenuOutlined } from '@material-ui/icons';
 import { AccountCircle } from '@material-ui/icons';
 import { Notifications } from '@material-ui/icons';
 import { SideMenu } from './SideMenu';
+import { NotificationBar } from './NotificationBar';
+
 export const NavBar = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -40,7 +42,7 @@ export const NavBar = () => {
               <Grid container justifyContent='flex-end'>
                 <Grid item>
                   <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                    <IconButton>
+                    <NotificationBar>
                       <Badge
                         overlap='rectangular'
                         badgeContent={10}
@@ -48,7 +50,7 @@ export const NavBar = () => {
                       >
                         <Notifications />
                       </Badge>
-                    </IconButton>
+                    </NotificationBar>
                   </Box>
                 </Grid>
                 <Grid item>
