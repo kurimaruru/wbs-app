@@ -6,32 +6,34 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import MailIcon from '@material-ui/icons/Mail';
-import { IconButton } from '@material-ui/core';
-import { Link } from 'react-router-dom';
-import DateRangeIcon from '@material-ui/icons/DateRange';
-import ScheduleIcon from '@material-ui/icons/Schedule';
-import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
+import {
+  Box,
+  Card,
+  CardContent,
+  IconButton,
+  Typography,
+} from '@material-ui/core';
+import { AccountCircle } from '@material-ui/icons';
 
 const useStyles = makeStyles({
   list: {
-    width: 250,
+    width: 300,
   },
   fullList: {
     width: 'auto',
   },
 });
 
-type Anchor = 'left';
+type Anchor = 'right';
 
-export const SideMenu = ({
+export const NotificationBar = ({
   children,
 }: {
   children: ReactNode;
 }): JSX.Element => {
   const classes = useStyles();
   const [state, setState] = React.useState({
-    left: false,
+    right: false,
   });
 
   const toggleDrawer =
@@ -48,24 +50,6 @@ export const SideMenu = ({
       setState({ ...state, [anchor]: open });
     };
 
-  const linkList = [
-    {
-      icon: <ScheduleIcon />,
-      link: 'wbs',
-      text: 'WBS',
-    },
-    {
-      icon: <FormatListBulletedIcon />,
-      link: 'todo',
-      text: 'ToDoList',
-    },
-    {
-      icon: <DateRangeIcon />,
-      link: 'calendar',
-      text: 'Schedule',
-    },
-  ];
-
   const list = (anchor: Anchor) => (
     <div
       className={clsx(classes.list)}
@@ -74,21 +58,19 @@ export const SideMenu = ({
       onKeyDown={toggleDrawer(anchor, false)}
     >
       <List>
-        {linkList.map((list) => {
-          return (
-            <ListItem button>
-              <ListItemIcon>{list.icon}</ListItemIcon>
-              <ListItemText>
-                <Link
-                  to={`/${list.link}`}
-                  style={{ textDecoration: 'none', color: 'black' }}
-                >
-                  {list.text}
-                </Link>
-              </ListItemText>
-            </ListItem>
-          );
-        })}
+        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+          <ListItem button key={text} style={{ padding: 0 }}>
+            <Card style={{ backgroundColor: '#ffffd6', width: '100%' }}>
+              <CardContent>
+                <Typography>2022-07-30</Typography>
+                <Box style={{ display: 'flex' }}>
+                  <AccountCircle />
+                  <Typography>栗原があなたをメンション</Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          </ListItem>
+        ))}
       </List>
     </div>
   );
@@ -96,13 +78,15 @@ export const SideMenu = ({
   return (
     <div>
       <React.Fragment>
-        <IconButton onClick={toggleDrawer('left', true)}>{children}</IconButton>
+        <IconButton onClick={toggleDrawer('right', true)}>
+          {children}
+        </IconButton>
         <Drawer
-          anchor='left'
-          open={state['left']}
-          onClose={toggleDrawer('left', false)}
+          anchor='right'
+          open={state['right']}
+          onClose={toggleDrawer('right', false)}
         >
-          {list('left')}
+          {list('right')}
         </Drawer>
       </React.Fragment>
     </div>

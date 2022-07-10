@@ -8,7 +8,6 @@ import { makeStyles } from '@material-ui/styles';
 import { Chip, Grid } from '@material-ui/core';
 import { WbsTestData } from '../../TestDatas/WbsTestDatas';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { useCallback } from 'react';
 
 const useStyles = makeStyles({
   editDialog: {
@@ -117,6 +116,7 @@ export const WbsEditDialog = ({
               <Chip label='実績' variant='outlined' color='primary' />
             </Grid>
             <Grid item xs={4} style={{ marginTop: '5px' }} />
+            <Grid item xs={4} style={{ marginTop: '5px' }} />
             <Grid item xs={4}>
               <TextField
                 autoFocus
@@ -187,7 +187,7 @@ export const WbsEditDialog = ({
           <Button
             onClick={closeEditDialog}
             variant='outlined'
-            style={{ width: '150px' }}
+            style={{ width: '120px' }}
           >
             キャンセル
           </Button>
@@ -195,7 +195,7 @@ export const WbsEditDialog = ({
             onClick={closeEditDialog}
             color='primary'
             variant='contained'
-            style={{ width: '150px' }}
+            style={{ width: '120px' }}
             type='submit'
           >
             更新
