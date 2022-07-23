@@ -1,14 +1,17 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { ResWbsData } from './apiResType';
 import axios from 'axios';
+import { CustomAxios } from '../CustomAxios';
+
+const customAxios = CustomAxios();
 
 export const callGetWbsAllDatas = createAsyncThunk(
   'wbs/getWbsData',
   async () => {
     console.log('call api');
     try {
-      const data = await axios
-        .get<ResWbsData[]>('http://localhost/api/wbs')
+      const data = await customAxios
+        .get<ResWbsData[]>('/api/wbs')
         .then((res) => res.data)
         .catch((error) => {
           console.log(error);
