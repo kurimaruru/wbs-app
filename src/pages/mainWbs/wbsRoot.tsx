@@ -10,21 +10,11 @@ import { useSelector } from 'react-redux';
 export const WbsRoot = (): JSX.Element => {
   const dispatch = useAppDispatch();
 
-  const getWbsAllData = useCallback(async () => {
-    try {
-      const res = callGetWbsAllDatas();
-      return res;
-    } catch (e) {
-      console.log(e);
-      throw e;
-    }
-  }, []);
-
-  // 初期表示
-  getWbsAllData();
+  useEffect(() => {
+    dispatch(callGetWbsAllDatas());
+  }, [dispatch]);
 
   const wbsState = useSelector((state: RootState) => state.wbs);
-  console.log(wbsState);
   return (
     <>
       <NavBar />

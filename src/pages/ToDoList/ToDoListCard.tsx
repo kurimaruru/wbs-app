@@ -52,11 +52,9 @@ export const ToDoListCard = () => {
 
   const openToDoList = (event: React.MouseEvent<HTMLButtonElement>) => {
     setOpen(true);
-    console.log(open);
   };
   const closeToDoList = (event: React.MouseEvent<HTMLButtonElement>) => {
     setOpen(false);
-    console.log(open);
   };
   return (
     <>

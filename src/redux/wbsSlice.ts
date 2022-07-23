@@ -1,11 +1,19 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { wbsTestDatas, WbsTestData } from '../TestDatas/WbsTestDatas';
+import { ResWbsData } from './apiResType';
+import axios from 'axios';
 
-export const callGetWbsAllDatas = createAsyncThunk<WbsTestData[]>(
+export const callGetWbsAllDatas = createAsyncThunk(
   'wbs/getWbsData',
   async () => {
+    console.log('call api');
     try {
-      const data = wbsTestDatas;
+      const data = await axios
+        .get<ResWbsData[]>('http://localhost/api/wbs')
+        .then((res) => res.data)
+        .catch((error) => {
+          console.log(error);
+          throw error;
+        });
       console.log(data);
       return data;
     } catch (e) {
@@ -15,7 +23,7 @@ export const callGetWbsAllDatas = createAsyncThunk<WbsTestData[]>(
 );
 
 export type WbsState = {
-  getWbsAllDataResponce: WbsTestData[] | undefined;
+  getWbsAllDataResponce: ResWbsData[] | undefined;
   isPosting: boolean;
   isRejected: boolean;
 };
