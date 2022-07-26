@@ -7,13 +7,16 @@ import {
   Button,
 } from '@material-ui/core';
 import { KeyboardArrowUp, KeyboardArrowDown } from '@material-ui/icons';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { AccountCircle } from '@material-ui/icons';
 import { DateTime } from 'luxon';
 import { round } from 'lodash';
+import { useAppDispatch } from '../../redux/store';
 import { WbsCommentTable } from './wbsCommentTable';
 import { WbsEditDialog } from '../../components/dialog/wbsEditDialog';
 import { WbsDeleteDialog } from '../../components/dialog/wbsDeleteDialog';
+import { ResWbsData } from '../../redux/apiResType';
+import { AsyncThunk } from '@reduxjs/toolkit';
 
 const useStyles = makeStyles({
   delay: {
@@ -26,40 +29,21 @@ const useStyles = makeStyles({
   },
 });
 
-type CommentListType = {
-  user: string;
-  createTime: string;
-  comment: string;
-};
-
-type WbsTestData = {
-  mainItem: string;
-  subItem: string;
-  plansStartDay: string;
-  plansDayCount: number;
-  plansFinishDay: string;
-  resultsStartDay: string;
-  resultsDayCount: number;
-  resultsFinisyDay: string;
-  delay: number;
-  progress: number;
-  productionCosts: number;
-  rep: string;
-  state: string;
-  commentList: CommentListType[];
-};
-
 type WbsTableBodyPorps = {
-  wbsTestDatas: WbsTestData;
+  wbsDatas: ResWbsData;
+  /** wbs更新 */
+  callPatchWbsData: AsyncThunk<void, ResWbsData, {}>;
 };
 
 export const WbsTableBody = ({
-  wbsTestDatas,
+  wbsDatas,
+  callPatchWbsData,
 }: WbsTableBodyPorps): JSX.Element => {
+  const dispatch = useAppDispatch();
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   // 現在時刻
-  const [nowTime, setNowTime] = useState(DateTime.now());
+  const [nowTime] = useState(DateTime.now());
 
   // --------------------------------------------
   // 編集ダイアログ
@@ -82,6 +66,35 @@ export const WbsTableBody = ({
     setOpenDelete(false);
   };
 
+  /**
+   * 開始日、終了日の差分日数を計算する
+   * @param planStartDay
+   * @param planFinishDay
+   * @returns
+   */
+  const calculatePlanDayCount = (
+    planStartDay: string,
+    planFinishDay: string
+  ) => {
+    // 終了日が入力されていない場合、空文字を返す。
+    if (!planFinishDay) {
+      return '';
+    }
+    // 両方がundefinedじゃないとき計算を行う。
+    if (planStartDay && planFinishDay) {
+      const start = DateTime.fromSQL(planStartDay);
+      const finish = DateTime.fromSQL(planFinishDay);
+      const dayCount = start.diff(finish, 'days');
+      const roundDayCount = round(dayCount.days).toString();
+      return roundDayCount;
+    }
+  };
+  /**
+   * 進捗の遅れを計算する関数
+   * @param planFinishDay
+   * @param resultFinishDay
+   * @returns
+   */
   const calculateDelay = (planFinishDay: string, resultFinishDay: string) => {
     let delayDays = '';
     const finishDay = DateTime.fromSQL(planFinishDay);
@@ -98,6 +111,18 @@ export const WbsTableBody = ({
     return delayDays;
   };
 
+  const updateWbsData = useCallback(
+    async (wbs: ResWbsData) => {
+      try {
+        dispatch(callPatchWbsData(wbs));
+        // ここで処理結果ダイアログを開く
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    [callPatchWbsData, dispatch]
+  );
+
   return (
     <>
       <TableRow>
@@ -111,28 +136,30 @@ export const WbsTableBody = ({
           </IconButton>
         </TableCell>
         <TableCell component='th' scope='row'>
-          {wbsTestDatas.mainItem}
+          {wbsDatas.mainItem}
         </TableCell>
-        <TableCell align='left'>{wbsTestDatas.subItem}</TableCell>
-        <TableCell align='left'>{wbsTestDatas.plansFinishDay}</TableCell>
-        <TableCell align='left'>{wbsTestDatas.plansDayCount}</TableCell>
-        <TableCell align='left'>{wbsTestDatas.plansFinishDay}</TableCell>
-        <TableCell align='left'>{wbsTestDatas.resultsStartDay}</TableCell>
-        <TableCell align='left'>{wbsTestDatas.resultsDayCount}</TableCell>
-        <TableCell align='left'>{wbsTestDatas.resultsFinisyDay}</TableCell>
-        <TableCell align='left'>{wbsTestDatas.progress}</TableCell>
-        <TableCell align='left'>{wbsTestDatas.productionCosts}</TableCell>
+        <TableCell align='left'>{wbsDatas.subItem}</TableCell>
+        <TableCell align='left'>{wbsDatas.plansStartDay}</TableCell>
+        <TableCell align='left'>
+          {calculatePlanDayCount(
+            wbsDatas.plansStartDay,
+            wbsDatas.plansFinishDay
+          )}
+        </TableCell>
+        <TableCell align='left'>{wbsDatas.plansFinishDay}</TableCell>
+        <TableCell align='left'>{wbsDatas.resultStartDay}</TableCell>
+        <TableCell align='left'>3</TableCell>
+        <TableCell align='left'>{wbsDatas.resultsFinishDay}</TableCell>
+        <TableCell align='left'>{wbsDatas.progress}</TableCell>
+        <TableCell align='left'>{wbsDatas.productionCost}</TableCell>
         <TableCell align='left'>
           <Box style={{ display: 'flex', justifyContent: 'flex-start' }}>
             <AccountCircle />
-            {wbsTestDatas.rep}
+            {wbsDatas.rep}
           </Box>
         </TableCell>
         <TableCell align='left'>
-          {calculateDelay(
-            wbsTestDatas.plansFinishDay,
-            wbsTestDatas.resultsFinisyDay
-          )}
+          {calculateDelay(wbsDatas.plansFinishDay, wbsDatas.resultsFinishDay)}
         </TableCell>
         <TableCell align='center'>
           <Button
@@ -153,16 +180,17 @@ export const WbsTableBody = ({
           </Button>
         </TableCell>
       </TableRow>
-      <WbsCommentTable open={open} commentHist={wbsTestDatas.commentList} />
+      {/* <WbsCommentTable open={open} commentHist={wbsDatas.commentList} />*/}
       <WbsEditDialog
-        wbsData={wbsTestDatas}
+        wbsData={wbsDatas}
+        updateWbsData={updateWbsData}
         open={openEdit}
         closeEditDialog={closeWbsEditDialog}
       />
       <WbsDeleteDialog
         open={openDelete}
         closeDeleteDialog={closeWbsDeleteDialog}
-        mainItem={wbsTestDatas.mainItem}
+        mainItem={wbsDatas.mainItem}
       />
     </>
   );

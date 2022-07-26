@@ -1,9 +1,9 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import { counterSlice } from './wbsSlice';
+import { wbsSlice } from './wbsSlice';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 // ルートとなるReducerを作成
 const rootReducer = combineReducers({
-  wbs: counterSlice.reducer,
+  wbs: wbsSlice.reducer,
 });
 export const store = configureStore({
   reducer: rootReducer,

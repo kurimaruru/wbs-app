@@ -1,4 +1,4 @@
-type CommentListType = {
+export type CommentListType = {
   wbsId: number;
   user: string;
   createTime: string;
@@ -12,10 +12,13 @@ export type ResWbsData = {
   subItem: string;
   plansStartDay: string;
   plansFinishDay: string;
-  resultsStartDay: string;
-  resultsFinisyDay: string;
+  resultStartDay: string;
+  resultsFinishDay: string;
   progress: number;
-  productionCosts: number;
+  productionCost: number;
   rep: string;
-  commentList: CommentListType[];
 };
+
+// export type ResWbsData = {
+//   wbs: WbsData[];
+// };

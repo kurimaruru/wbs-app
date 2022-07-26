@@ -1,4 +1,5 @@
 import { ReplyOutlined, AddCircleOutlineOutlined } from '@material-ui/icons';
+import { CommentListType } from '../../redux/apiResType';
 import {
   Box,
   Table,
@@ -10,11 +11,7 @@ import {
   Grid,
   Collapse,
 } from '@material-ui/core';
-type CommentListType = {
-  user: string;
-  createTime: string;
-  comment: string;
-};
+
 type WbsCommentTableProps = {
   open: boolean;
   commentHist: CommentListType[];
