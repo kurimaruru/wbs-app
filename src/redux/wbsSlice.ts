@@ -51,13 +51,31 @@ export const callGetWbsDetailData = createAsyncThunk(
 export const callPatchWbsData = createAsyncThunk(
   'wbs/patchWbsData',
   async (wbs: ResWbsData) => {
-    console.log('update', wbs);
     await customAxios
       .patch(`/api/wbs/${wbs.id}`, {
-        params: {
-          wbs: wbs,
-        },
+        mainItem: wbs.mainItem,
+        subItem: wbs.subItem,
+        plansStartDay: wbs.plansStartDay,
+        plansFinishDay: wbs.plansFinishDay,
+        resultStartDay: wbs.resultStartDay,
+        resultsFinishDay: wbs.resultsFinishDay,
+        progress: wbs.progress,
+        productionCost: wbs.productionCost,
+        rep: wbs.rep,
       })
+      .then((res) => res.data)
+      .catch((e) => {
+        throw e;
+      });
+  }
+);
+
+// wbs削除
+export const callDeleteWbsData = createAsyncThunk(
+  'wbs/deleteWbsData',
+  async (id: number) => {
+    await customAxios
+      .delete(`/api/wbs/${id}`)
       .then((res) => res.data)
       .catch((e) => {
         throw e;

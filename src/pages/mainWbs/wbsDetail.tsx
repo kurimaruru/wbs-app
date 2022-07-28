@@ -3,7 +3,12 @@ import { NavBar } from '../../components/NavBar';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import { RootState } from '../../redux/store';
 import { useSearchParams } from 'react-router-dom';
-import { callGetWbsDetailData, callPatchWbsData } from '../../redux/wbsSlice';
+import {
+  callGetWbsDetailData,
+  callGetWbsAllDatas,
+  callPatchWbsData,
+  callDeleteWbsData,
+} from '../../redux/wbsSlice';
 import { useEffect } from 'react';
 
 export const WbsDetail = (): JSX.Element => {
@@ -24,7 +29,9 @@ export const WbsDetail = (): JSX.Element => {
       <NavBar />
       <WbsTable
         wbsDatas={wbsDetailState.getwbsDetailResponce}
+        callGetWbsAllDatas={callGetWbsAllDatas}
         callPatchWbsData={callPatchWbsData}
+        callDeleteeWbsData={callDeleteWbsData}
       />
     </>
   );

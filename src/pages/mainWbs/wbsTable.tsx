@@ -33,8 +33,12 @@ const useStyles = makeStyles({
 type WbsTableProps = {
   /** wbsに表示するWBSのデータ */
   wbsDatas?: ResWbsData[];
+  /** wbs一覧取得 */
+  callGetWbsAllDatas: AsyncThunk<ResWbsData[], void, {}>;
   /** wbs更新 */
   callPatchWbsData: AsyncThunk<void, ResWbsData, {}>;
+  /** wbs削除 */
+  callDeleteeWbsData: AsyncThunk<void, number, {}>;
 };
 
 /**
@@ -42,7 +46,9 @@ type WbsTableProps = {
  */
 export const WbsTable = ({
   wbsDatas,
+  callGetWbsAllDatas,
   callPatchWbsData,
+  callDeleteeWbsData,
 }: WbsTableProps): JSX.Element => {
   const classes = useStyles();
   const [page, setPage] = useState(0);
@@ -84,40 +90,40 @@ export const WbsTable = ({
             >
               <TableHead>
                 <TableRow>
-                  <TableCell rowSpan={2} style={{ width: '20px' }} />
+                  <TableCell rowSpan={2} style={{ width: '3%' }} />
                   <TableCell
                     rowSpan={2}
-                    style={{ fontWeight: 'bold', width: '5%' }}
+                    style={{ fontWeight: 'bold', width: '7%' }}
                   >
                     項目
                   </TableCell>
                   <TableCell
                     rowSpan={2}
-                    style={{ fontWeight: 'bold', width: '5%' }}
+                    style={{ fontWeight: 'bold', width: '7%' }}
                   >
                     中項目
                   </TableCell>
                   <TableCell
                     colSpan={3}
-                    style={{ fontWeight: 'bold', width: '20%' }}
+                    style={{ fontWeight: 'bold', width: '23%' }}
                   >
                     予定
                   </TableCell>
                   <TableCell
                     colSpan={4}
-                    style={{ fontWeight: 'bold', width: '25%' }}
+                    style={{ fontWeight: 'bold', width: '30%' }}
                   >
                     実績
                   </TableCell>
                   <TableCell
                     rowSpan={2}
-                    style={{ fontWeight: 'bold', width: '5%' }}
+                    style={{ fontWeight: 'bold', width: '3%' }}
                   >
                     工数
                   </TableCell>
                   <TableCell
                     rowSpan={2}
-                    style={{ fontWeight: 'bold', width: '8%' }}
+                    style={{ fontWeight: 'bold', width: '10%' }}
                   >
                     <Button
                       aria-controls='simple-menu'
@@ -143,24 +149,28 @@ export const WbsTable = ({
                   <TableCell
                     style={{ fontWeight: 'bold' }}
                     rowSpan={2}
-                    align='center'
+                    align='right'
                   >
                     編集
                   </TableCell>
                   <TableCell
                     style={{ fontWeight: 'bold' }}
                     rowSpan={2}
-                    align='center'
+                    align='right'
                   >
                     削除
                   </TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell style={{ fontWeight: 'bold' }}>開始日</TableCell>
-                  <TableCell style={{ fontWeight: 'bold' }}>日数</TableCell>
+                  <TableCell align='center' style={{ fontWeight: 'bold' }}>
+                    日数
+                  </TableCell>
                   <TableCell style={{ fontWeight: 'bold' }}>終了日</TableCell>
                   <TableCell style={{ fontWeight: 'bold' }}>開始日</TableCell>
-                  <TableCell style={{ fontWeight: 'bold' }}>日数</TableCell>
+                  <TableCell style={{ fontWeight: 'bold' }} align='center'>
+                    日数
+                  </TableCell>
                   <TableCell style={{ fontWeight: 'bold' }}>終了日</TableCell>
                   <TableCell style={{ fontWeight: 'bold' }}>進捗</TableCell>
                 </TableRow>
@@ -171,7 +181,9 @@ export const WbsTable = ({
                   .map((data) => (
                     <WbsTableBody
                       wbsDatas={data}
+                      callGetWbsAllDatas={callGetWbsAllDatas}
                       callPatchWbsData={callPatchWbsData}
+                      callDeleteeWbsData={callDeleteeWbsData}
                       key={data.mainItem}
                     />
                   ))}

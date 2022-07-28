@@ -7,6 +7,8 @@ import {
   Button,
 } from '@material-ui/core';
 import { KeyboardArrowUp, KeyboardArrowDown } from '@material-ui/icons';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
 import { useCallback, useState } from 'react';
 import { AccountCircle } from '@material-ui/icons';
 import { DateTime } from 'luxon';
@@ -15,6 +17,7 @@ import { useAppDispatch } from '../../redux/store';
 import { WbsCommentTable } from './wbsCommentTable';
 import { WbsEditDialog } from '../../components/dialog/wbsEditDialog';
 import { WbsDeleteDialog } from '../../components/dialog/wbsDeleteDialog';
+import { ResultDialog } from '../../components/dialog/resultDialog';
 import { ResWbsData } from '../../redux/apiResType';
 import { AsyncThunk } from '@reduxjs/toolkit';
 
@@ -27,17 +30,26 @@ const useStyles = makeStyles({
     fontWeight: 'bold',
     color: 'blue',
   },
+  tableRow: {
+    backgroundColor: '#f4f4f4',
+  },
 });
 
 type WbsTableBodyPorps = {
   wbsDatas: ResWbsData;
+  /** wbs一覧取得 */
+  callGetWbsAllDatas: AsyncThunk<ResWbsData[], void, {}>;
   /** wbs更新 */
   callPatchWbsData: AsyncThunk<void, ResWbsData, {}>;
+  /** wbs削除 */
+  callDeleteeWbsData: AsyncThunk<void, number, {}>;
 };
 
 export const WbsTableBody = ({
   wbsDatas,
+  callGetWbsAllDatas,
   callPatchWbsData,
+  callDeleteeWbsData,
 }: WbsTableBodyPorps): JSX.Element => {
   const dispatch = useAppDispatch();
   const classes = useStyles();
@@ -65,7 +77,19 @@ export const WbsTableBody = ({
   const closeWbsDeleteDialog = () => {
     setOpenDelete(false);
   };
-
+  // --------------------------------------------
+  // 処理結果ダイアログ
+  // --------------------------------------------
+  const [openResult, setOpenResult] = useState(false);
+  const [actionResult, setActionResult] = useState('');
+  const openWbsResultDialog = () => {
+    setOpenResult(true);
+  };
+  const closeWbsResultDialog = () => {
+    setOpenResult(false);
+    // 再レンダリング
+    dispatch(callGetWbsAllDatas());
+  };
   /**
    * 開始日、終了日の差分日数を計算する
    * @param planStartDay
@@ -111,11 +135,14 @@ export const WbsTableBody = ({
     return delayDays;
   };
 
+  //wbs更新
   const updateWbsData = useCallback(
     async (wbs: ResWbsData) => {
       try {
-        dispatch(callPatchWbsData(wbs));
+        await dispatch(callPatchWbsData(wbs));
+        setActionResult('WBS更新');
         // ここで処理結果ダイアログを開く
+        openWbsResultDialog();
       } catch (e) {
         console.log(e);
       }
@@ -123,9 +150,24 @@ export const WbsTableBody = ({
     [callPatchWbsData, dispatch]
   );
 
+  //wbs削除
+  const deleteWbsData = useCallback(
+    async (id: number) => {
+      try {
+        dispatch(callDeleteeWbsData(id));
+        setActionResult('WBS削除');
+        // ここで処理結果ダイアログを開く
+        openWbsResultDialog();
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    [callDeleteeWbsData, dispatch]
+  );
+
   return (
     <>
-      <TableRow>
+      <TableRow className={classes.tableRow}>
         <TableCell>
           <IconButton
             aria-label='expand row'
@@ -140,7 +182,7 @@ export const WbsTableBody = ({
         </TableCell>
         <TableCell align='left'>{wbsDatas.subItem}</TableCell>
         <TableCell align='left'>{wbsDatas.plansStartDay}</TableCell>
-        <TableCell align='left'>
+        <TableCell align='center'>
           {calculatePlanDayCount(
             wbsDatas.plansStartDay,
             wbsDatas.plansFinishDay
@@ -148,7 +190,7 @@ export const WbsTableBody = ({
         </TableCell>
         <TableCell align='left'>{wbsDatas.plansFinishDay}</TableCell>
         <TableCell align='left'>{wbsDatas.resultStartDay}</TableCell>
-        <TableCell align='left'>3</TableCell>
+        <TableCell align='center'>3</TableCell>
         <TableCell align='left'>{wbsDatas.resultsFinishDay}</TableCell>
         <TableCell align='left'>{wbsDatas.progress}</TableCell>
         <TableCell align='left'>{wbsDatas.productionCost}</TableCell>
@@ -162,25 +204,18 @@ export const WbsTableBody = ({
           {calculateDelay(wbsDatas.plansFinishDay, wbsDatas.resultsFinishDay)}
         </TableCell>
         <TableCell align='center'>
-          <Button
-            color='primary'
-            variant='contained'
-            onClick={openWbsEditDialog}
-          >
-            編集
+          <Button onClick={openWbsEditDialog}>
+            <EditIcon fontSize='medium' />
           </Button>
         </TableCell>
         <TableCell align='center'>
-          <Button
-            color='secondary'
-            variant='contained'
-            onClick={openWbsDeleteDialog}
-          >
-            削除
+          <Button onClick={openWbsDeleteDialog}>
+            <DeleteIcon fontSize='medium' style={{ color: 'red' }} />
           </Button>
         </TableCell>
       </TableRow>
-      {/* <WbsCommentTable open={open} commentHist={wbsDatas.commentList} />*/}
+
+      <WbsCommentTable open={open} />
       <WbsEditDialog
         wbsData={wbsDatas}
         updateWbsData={updateWbsData}
@@ -189,8 +224,15 @@ export const WbsTableBody = ({
       />
       <WbsDeleteDialog
         open={openDelete}
+        deleteWbsData={deleteWbsData}
         closeDeleteDialog={closeWbsDeleteDialog}
+        wbsId={wbsDatas.id}
         mainItem={wbsDatas.mainItem}
+      />
+      <ResultDialog
+        open={openResult}
+        closeResultDialog={closeWbsResultDialog}
+        actionResult={actionResult}
       />
     </>
   );

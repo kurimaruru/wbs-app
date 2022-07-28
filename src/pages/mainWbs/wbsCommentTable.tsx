@@ -14,7 +14,7 @@ import {
 
 type WbsCommentTableProps = {
   open: boolean;
-  commentHist: CommentListType[];
+  commentHist?: CommentListType[];
 };
 export const WbsCommentTable = ({
   open,
@@ -38,20 +38,27 @@ export const WbsCommentTable = ({
                   <TableHead>
                     <TableRow>
                       <TableCell />
-                      <TableCell style={{ width: '20%' }}>ユーザー</TableCell>
-                      <TableCell style={{ width: '15%' }}>日時</TableCell>
-                      <TableCell style={{ width: '65%' }}>コメント</TableCell>
+                      <TableCell style={{ width: '20%', fontWeight: 'bold' }}>
+                        ユーザー
+                      </TableCell>
+                      <TableCell style={{ width: '15%', fontWeight: 'bold' }}>
+                        日時
+                      </TableCell>
+                      <TableCell style={{ width: '65%', fontWeight: 'bold' }}>
+                        コメント
+                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {commentHist.map((data) => (
-                      <TableRow style={{ width: '100%' }} key={createKey()}>
-                        <TableCell />
-                        <TableCell>{data.user}</TableCell>
-                        <TableCell>{data.createTime}</TableCell>
-                        <TableCell>{data.comment}</TableCell>
-                      </TableRow>
-                    ))}
+                    {commentHist &&
+                      commentHist.map((data) => (
+                        <TableRow style={{ width: '100%' }} key={createKey()}>
+                          <TableCell />
+                          <TableCell>{data.user}</TableCell>
+                          <TableCell>{data.createTime}</TableCell>
+                          <TableCell>{data.comment}</TableCell>
+                        </TableRow>
+                      ))}
 
                     <TableRow style={{ width: '100%' }}>
                       <TableCell />

@@ -1,7 +1,11 @@
 import { WbsTable } from './wbsTable';
 import { NavBar } from '../../components/NavBar';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
-import { callGetWbsAllDatas, callPatchWbsData } from '../../redux/wbsSlice';
+import {
+  callGetWbsAllDatas,
+  callPatchWbsData,
+  callDeleteWbsData,
+} from '../../redux/wbsSlice';
 import { useEffect } from 'react';
 import { RootState } from '../../redux/store';
 
@@ -19,7 +23,9 @@ export const WbsRoot = (): JSX.Element => {
       <NavBar />
       <WbsTable
         wbsDatas={wbsState.getWbsAllDataResponce}
+        callGetWbsAllDatas={callGetWbsAllDatas}
         callPatchWbsData={callPatchWbsData}
+        callDeleteeWbsData={callDeleteWbsData}
       />
     </>
   );
