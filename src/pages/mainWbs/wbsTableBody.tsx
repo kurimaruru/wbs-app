@@ -11,7 +11,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import { useCallback, useState, useMemo, useEffect } from 'react';
 import { AccountCircle } from '@material-ui/icons';
-import { DateTime } from 'luxon';
+// import { DateTime } from 'luxon';
 import { round } from 'lodash';
 import { RootState, useAppDispatch, useAppSelector } from '../../redux/store';
 import { WbsCommentTable } from './wbsCommentTable';
@@ -64,6 +64,7 @@ export const WbsTableBody = ({
   const [open, setOpen] = useState(false);
   // 現在時刻
   const [nowTime] = useState(DateTime.now());
+
 
   // --------------------------------------------
   // 編集ダイアログ
@@ -140,6 +141,7 @@ export const WbsTableBody = ({
       delayDays = round(delay.days).toString();
       return <span className={classes.delay}>{`遅れ${delayDays}日`}</span>;
     }
+
     // 進捗が完了している場合
     if (resultFinishDay) {
       return <span className={classes.finish}>完了</span>;
