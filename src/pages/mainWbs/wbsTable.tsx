@@ -17,8 +17,12 @@ import { WbsTableBody } from './wbsTableBody';
 import { PagenationAction } from '../../components/PagenationActions';
 import { useState } from 'react';
 import { WbsOperationMenu } from './wbsOperationMenu';
-import { ResWbsData } from '../../redux/apiResType';
+import { CommentListType, ResWbsData } from '../../redux/apiResType';
+import { WbsAddDialog } from '../../components/dialog/wbsAddDialog';
 import { AsyncThunk } from '@reduxjs/toolkit';
+import { useCallback } from 'react';
+import { useAppDispatch } from '../../redux/store';
+import { ResultDialog } from '../../components/dialog/resultDialog';
 
 const useStyles = makeStyles({
   tableContainer: {
@@ -35,10 +39,14 @@ type WbsTableProps = {
   wbsDatas?: ResWbsData[];
   /** wbs一覧取得 */
   callGetWbsAllDatas: AsyncThunk<ResWbsData[], void, {}>;
+  /** wbs新規追加 */
+  callPostWbsData: AsyncThunk<void, ResWbsData, {}>;
   /** wbs更新 */
   callPatchWbsData: AsyncThunk<void, ResWbsData, {}>;
   /** wbs削除 */
   callDeleteeWbsData: AsyncThunk<void, number, {}>;
+  /** コメント取得 */
+  callGetCommentData: AsyncThunk<CommentListType[], number, {}>;
 };
 
 /**
@@ -47,9 +55,12 @@ type WbsTableProps = {
 export const WbsTable = ({
   wbsDatas,
   callGetWbsAllDatas,
+  callPostWbsData,
   callPatchWbsData,
   callDeleteeWbsData,
+  callGetCommentData,
 }: WbsTableProps): JSX.Element => {
+  const dispatch = useAppDispatch();
   const classes = useStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -58,7 +69,6 @@ export const WbsTable = ({
   const handleRepButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
-
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -69,17 +79,54 @@ export const WbsTable = ({
   ) => {
     setPage(newPage);
   };
-
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+  // --------------------------------------------
+  // 処理結果ダイアログ
+  // --------------------------------------------
+  const [openResult, setOpenResult] = useState(false);
+  const [actionResult, setActionResult] = useState('');
+  const openWbsResultDialog = () => {
+    setOpenResult(true);
+  };
+  const closeWbsResultDialog = () => {
+    setOpenResult(false);
+    // 再レンダリング
+    dispatch(callGetWbsAllDatas());
+  };
+  // --------------------------------------------
+  // 追加ダイアログ
+  // --------------------------------------------
+  const [openCreate, setOpenCreate] = useState(false);
+  const openWbsCreateDialog = () => {
+    setOpenCreate(true);
+  };
+  const closeWbsCreateDialog = () => {
+    setOpenCreate(false);
+  };
+
+  //wbs追加
+  const createWbsData = useCallback(
+    async (wbs: ResWbsData) => {
+      try {
+        await dispatch(callPostWbsData(wbs));
+        setActionResult('WBS新規追加');
+        // ここで処理結果ダイアログを開く
+        openWbsResultDialog();
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    [callPostWbsData, dispatch]
+  );
 
   return (
     <Grid container spacing={1}>
-      <WbsOperationMenu />
+      <WbsOperationMenu openWbsCreateDialog={openWbsCreateDialog} />
       {wbsDatas && (
         <Grid item xs={12}>
           <TableContainer className={classes.tableContainer}>
@@ -90,47 +137,48 @@ export const WbsTable = ({
             >
               <TableHead>
                 <TableRow>
-                  <TableCell rowSpan={2} style={{ width: '3%' }} />
+                  <TableCell rowSpan={2} style={{ width: '2%' }} />
                   <TableCell
                     rowSpan={2}
-                    style={{ fontWeight: 'bold', width: '7%' }}
+                    style={{ fontWeight: 'bold', width: '6%' }}
                   >
                     項目
                   </TableCell>
                   <TableCell
                     rowSpan={2}
-                    style={{ fontWeight: 'bold', width: '7%' }}
+                    style={{ fontWeight: 'bold', width: '6%' }}
                   >
                     中項目
                   </TableCell>
                   <TableCell
                     colSpan={3}
-                    style={{ fontWeight: 'bold', width: '23%' }}
+                    style={{ fontWeight: 'bold', width: '20%' }}
                   >
                     予定
                   </TableCell>
                   <TableCell
                     colSpan={4}
-                    style={{ fontWeight: 'bold', width: '30%' }}
+                    style={{ fontWeight: 'bold', width: '25%' }}
                   >
                     実績
                   </TableCell>
                   <TableCell
                     rowSpan={2}
-                    style={{ fontWeight: 'bold', width: '3%' }}
+                    style={{ fontWeight: 'bold', width: '5%' }}
                   >
                     工数
                   </TableCell>
                   <TableCell
                     rowSpan={2}
                     style={{ fontWeight: 'bold', width: '10%' }}
+                    align='center'
                   >
                     <Button
                       aria-controls='simple-menu'
                       aria-haspopup='true'
                       onClick={handleRepButtonClick}
                     >
-                      <FilterListSharp />
+                      <FilterListSharp style={{ margin: '0px' }} />
                     </Button>
                     <Menu
                       id='simple-menu'
@@ -143,20 +191,30 @@ export const WbsTable = ({
                     </Menu>
                     担当
                   </TableCell>
-                  <TableCell rowSpan={2} style={{ fontWeight: 'bold' }}>
+                  <TableCell
+                    rowSpan={2}
+                    style={{ fontWeight: 'bold', width: '10%' }}
+                    align='center'
+                  >
                     状態
                   </TableCell>
+                  {/* <TableCell
+                    rowSpan={2}
+                    style={{ fontWeight: 'bold', width: '5%' }}
+                  >
+                    通知
+                  </TableCell> */}
                   <TableCell
                     style={{ fontWeight: 'bold' }}
                     rowSpan={2}
-                    align='right'
+                    align='center'
                   >
                     編集
                   </TableCell>
                   <TableCell
                     style={{ fontWeight: 'bold' }}
                     rowSpan={2}
-                    align='right'
+                    align='center'
                   >
                     削除
                   </TableCell>
@@ -184,7 +242,8 @@ export const WbsTable = ({
                       callGetWbsAllDatas={callGetWbsAllDatas}
                       callPatchWbsData={callPatchWbsData}
                       callDeleteeWbsData={callDeleteeWbsData}
-                      key={data.mainItem}
+                      callGetCommentData={callGetCommentData}
+                      key={data.id}
                     />
                   ))}
               </TableBody>
@@ -202,6 +261,16 @@ export const WbsTable = ({
           />
         </Grid>
       )}
+      <WbsAddDialog
+        createWbsData={createWbsData}
+        open={openCreate}
+        closeCreateDialog={closeWbsCreateDialog}
+      />
+      <ResultDialog
+        open={openResult}
+        closeResultDialog={closeWbsResultDialog}
+        actionResult={actionResult}
+      />
     </Grid>
   );
 };

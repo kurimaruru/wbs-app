@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { ResWbsData } from './apiResType';
+import { CommentListType, ResWbsData } from './apiResType';
 import { CustomAxios } from '../CustomAxios';
 
 const customAxios = CustomAxios();
@@ -8,7 +8,6 @@ const customAxios = CustomAxios();
 export const callGetWbsAllDatas = createAsyncThunk(
   'wbs/getWbsData',
   async () => {
-    console.log('call api getAllWbs');
     try {
       const data = await customAxios
         .get<ResWbsData[]>('/api/wbs')
@@ -27,7 +26,6 @@ export const callGetWbsAllDatas = createAsyncThunk(
 export const callGetWbsDetailData = createAsyncThunk(
   'wbs/getDetailWbs',
   async (user: string) => {
-    console.log('call api getDetailWbs');
     try {
       const data = await customAxios
         .get<ResWbsData[]>('/api/wbsDetail', {
@@ -44,6 +42,29 @@ export const callGetWbsDetailData = createAsyncThunk(
     } catch (e) {
       throw e;
     }
+  }
+);
+
+// WBS新規作成
+export const callPostWbsData = createAsyncThunk(
+  'wbs/postWbsData',
+  async (wbs: ResWbsData) => {
+    await customAxios
+      .post('/api/wbs', {
+        mainItem: wbs.mainItem,
+        subItem: wbs.subItem,
+        plansStartDay: wbs.plansStartDay,
+        plansFinishDay: wbs.plansFinishDay,
+        resultStartDay: wbs.resultStartDay,
+        resultsFinishDay: wbs.resultsFinishDay,
+        progress: wbs.progress,
+        productionCost: wbs.productionCost,
+        rep: wbs.rep,
+      })
+      .then((res) => res.data)
+      .catch((e) => {
+        throw e;
+      });
   }
 );
 
@@ -83,9 +104,108 @@ export const callDeleteWbsData = createAsyncThunk(
   }
 );
 
+// コメント取得
+export const callGetCommentData = createAsyncThunk(
+  'wbs/getComment',
+  async (id: number) => {
+    const data = await customAxios
+      .get<CommentListType[]>(`/api/comment/${id}`)
+      .then((res) => res.data)
+      .catch((e) => {
+        throw e;
+      });
+    return data;
+  }
+);
+
+// コメント新規作成
+export const callPostCommentData = createAsyncThunk(
+  'wbs/postCommentData',
+  async (comment: CommentListType) => {
+    await customAxios
+      .post('/api/comment', {
+        wbsId: comment.wbsId,
+        user: comment.user,
+        comment: comment.comment,
+        confirmFlag: comment.confirmFlag,
+      })
+      .then((res) => res.data)
+      .catch((e) => {
+        throw e;
+      });
+  }
+);
+
+// コメント更新
+export const callPatchCommentData = createAsyncThunk(
+  'wbs/patchCommentData',
+  async (comment: CommentListType) => {
+    await customAxios
+      .patch(`/api/comment/${comment.wbsId}`, {
+        wbsId: comment.wbsId,
+        user: comment.user,
+        comment: comment.comment,
+      })
+      .then((res) => res.data)
+      .catch((e) => {
+        throw e;
+      });
+  }
+);
+
+// コメント削除
+export const callDeleteCommentData = createAsyncThunk(
+  'wbs/deleteCommentData',
+  async (id: number) => {
+    await customAxios
+      .delete(`/api/comment/${id}`)
+      .then((res) => res.data)
+      .catch((e) => {
+        throw e;
+      });
+  }
+);
+
+// カレンダー上でWBSのスケジュール更新
+export const callPatchWbsOnCalendar = createAsyncThunk(
+  'wbs/patchWbsOnCalendar',
+  async (wbs: ResWbsData) => {
+    await customAxios
+      .patch(`/api/wbs/${wbs.id}`, {
+        mainItem: wbs.mainItem,
+        subItem: wbs.subItem,
+        plansStartDay: wbs.plansStartDay,
+        plansFinishDay: wbs.plansFinishDay,
+        resultStartDay: wbs.resultStartDay,
+        resultsFinishDay: wbs.resultsFinishDay,
+        progress: wbs.progress,
+        productionCost: wbs.productionCost,
+        rep: wbs.rep,
+      })
+      .then((res) => res.data)
+      .catch((e) => {
+        throw e;
+      });
+  }
+);
+
+// カレンダー上でWBSのスケジュール削除
+export const callDeleteWbsDataOnCalendar = createAsyncThunk(
+  'wbs/deleteWbsOnCalendar',
+  async (id: number) => {
+    await customAxios
+      .delete(`/api/wbs/${id}`)
+      .then((res) => res.data)
+      .catch((e) => {
+        throw e;
+      });
+  }
+);
+
 export type WbsState = {
   getWbsAllDataResponce: ResWbsData[] | undefined;
   getwbsDetailResponce: ResWbsData[] | undefined;
+  getCommentResponce: CommentListType[] | undefined;
   isPosting: boolean;
   isRejected: boolean;
 };
@@ -93,6 +213,7 @@ export type WbsState = {
 const initialState: WbsState = {
   getWbsAllDataResponce: undefined,
   getwbsDetailResponce: undefined,
+  getCommentResponce: undefined,
   isPosting: false,
   isRejected: false,
 };
@@ -142,6 +263,19 @@ export const wbsSlice = createSlice({
       state.isPosting = false;
       state.isRejected = true;
     });
+    // wbs新規作成
+    builder.addCase(callPostWbsData.pending, (state) => {
+      state.isPosting = true;
+      state.isRejected = false;
+    });
+    builder.addCase(callPostWbsData.fulfilled, (state) => {
+      state.isPosting = false;
+      state.isRejected = false;
+    });
+    builder.addCase(callPostWbsData.rejected, (state) => {
+      state.isPosting = false;
+      state.isRejected = true;
+    });
     // wbs更新
     builder.addCase(callPatchWbsData.pending, (state) => {
       state.isPosting = true;
@@ -152,6 +286,98 @@ export const wbsSlice = createSlice({
       state.isRejected = false;
     });
     builder.addCase(callPatchWbsData.rejected, (state) => {
+      state.isPosting = false;
+      state.isRejected = true;
+    });
+    // wbs削除
+    builder.addCase(callDeleteWbsData.pending, (state) => {
+      state.isPosting = true;
+      state.isRejected = false;
+    });
+    builder.addCase(callDeleteWbsData.fulfilled, (state) => {
+      state.isPosting = false;
+      state.isRejected = false;
+    });
+    builder.addCase(callDeleteWbsData.rejected, (state) => {
+      state.isPosting = false;
+      state.isRejected = true;
+    });
+    // comment取得
+    builder.addCase(callGetCommentData.pending, (state) => {
+      state.isPosting = true;
+      state.isRejected = false;
+    });
+    builder.addCase(callGetCommentData.fulfilled, (state, action) => {
+      state.isPosting = false;
+      state.isRejected = false;
+      state.getCommentResponce = action.payload;
+    });
+    builder.addCase(callGetCommentData.rejected, (state) => {
+      state.isPosting = false;
+      state.isRejected = true;
+    });
+    // コメント新規作成
+    builder.addCase(callPostCommentData.pending, (state) => {
+      state.isPosting = true;
+      state.isRejected = false;
+    });
+    builder.addCase(callPostCommentData.fulfilled, (state) => {
+      state.isPosting = false;
+      state.isRejected = false;
+    });
+    builder.addCase(callPostCommentData.rejected, (state) => {
+      state.isPosting = false;
+      state.isRejected = true;
+    });
+    // コメント更新
+    builder.addCase(callPatchCommentData.pending, (state) => {
+      state.isPosting = true;
+      state.isRejected = false;
+    });
+    builder.addCase(callPatchCommentData.fulfilled, (state) => {
+      state.isPosting = false;
+      state.isRejected = false;
+    });
+    builder.addCase(callPatchCommentData.rejected, (state) => {
+      state.isPosting = false;
+      state.isRejected = true;
+    });
+    // コメント削除
+    builder.addCase(callDeleteCommentData.pending, (state) => {
+      state.isPosting = true;
+      state.isRejected = false;
+    });
+    builder.addCase(callDeleteCommentData.fulfilled, (state) => {
+      state.isPosting = false;
+      state.isRejected = false;
+    });
+    builder.addCase(callDeleteCommentData.rejected, (state) => {
+      state.isPosting = false;
+      state.isRejected = true;
+    });
+    // カレンダー上でwbs更新
+    builder.addCase(callPatchWbsOnCalendar.pending, (state) => {
+      state.isPosting = true;
+      state.isRejected = false;
+    });
+    builder.addCase(callPatchWbsOnCalendar.fulfilled, (state) => {
+      state.isPosting = false;
+      state.isRejected = false;
+    });
+    builder.addCase(callPatchWbsOnCalendar.rejected, (state) => {
+      state.isPosting = false;
+      state.isRejected = true;
+    });
+    // カレンダー上でwbs削除
+    builder.addCase(callDeleteWbsDataOnCalendar.pending, (state) => {
+      state.isPosting = true;
+      state.isRejected = false;
+    });
+    builder.addCase(callDeleteWbsDataOnCalendar.fulfilled, (state) => {
+      state.isPosting = false;
+      state.isRejected = false;
+    });
+    builder.addCase(callDeleteWbsDataOnCalendar.rejected, (state) => {
       state.isPosting = false;
       state.isRejected = true;
     });

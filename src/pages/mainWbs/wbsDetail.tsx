@@ -5,16 +5,17 @@ import { RootState } from '../../redux/store';
 import { useSearchParams } from 'react-router-dom';
 import {
   callGetWbsDetailData,
+  callPostWbsData,
   callGetWbsAllDatas,
   callPatchWbsData,
   callDeleteWbsData,
+  callGetCommentData,
 } from '../../redux/wbsSlice';
 import { useEffect } from 'react';
 
 export const WbsDetail = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const [userParam] = useSearchParams();
-  console.log(userParam.get('user'));
 
   // WBS詳細画面表示時、WBS詳細情報取得
   useEffect(() => {
@@ -30,8 +31,10 @@ export const WbsDetail = (): JSX.Element => {
       <WbsTable
         wbsDatas={wbsDetailState.getwbsDetailResponce}
         callGetWbsAllDatas={callGetWbsAllDatas}
+        callPostWbsData={callPostWbsData}
         callPatchWbsData={callPatchWbsData}
         callDeleteeWbsData={callDeleteWbsData}
+        callGetCommentData={callGetCommentData}
       />
     </>
   );

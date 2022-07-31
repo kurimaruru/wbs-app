@@ -1,9 +1,9 @@
 export type CommentListType = {
   wbsId: number;
   user: string;
-  createTime: string;
   comment: string;
   createdTime: string;
+  confirmFlag: number;
 };
 
 export type ResWbsData = {

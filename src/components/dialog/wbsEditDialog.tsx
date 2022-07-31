@@ -119,6 +119,9 @@ export const WbsEditDialog = ({
                 type='date'
                 fullWidth
                 defaultValue={wbsData.resultStartDay}
+                InputLabelProps={{
+                  shrink: true,
+                }}
                 {...register('resultStartDay')}
               />
             </Grid>
