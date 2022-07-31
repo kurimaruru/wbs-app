@@ -12,22 +12,20 @@ import { ResWbsData } from '../../redux/apiResType';
 const useStyles = makeStyles({
   editDialog: {
     width: '550px',
-    height: '350px',
+    height: '300px',
   },
 });
 
-type WbsEditDialogProps = {
-  wbsData: ResWbsData;
-  updateWbsData: (wbs: ResWbsData) => Promise<void>;
+type WbsAddDialogProps = {
+  createWbsData: (wbs: ResWbsData) => Promise<void>;
   open: boolean;
-  closeEditDialog: () => void;
+  closeCreateDialog: () => void;
 };
-export const WbsEditDialog = ({
-  wbsData,
-  updateWbsData,
+export const WbsAddDialog = ({
+  createWbsData,
   open,
-  closeEditDialog,
-}: WbsEditDialogProps): JSX.Element => {
+  closeCreateDialog,
+}: WbsAddDialogProps): JSX.Element => {
   const classes = useStyles();
   const {
     handleSubmit,
@@ -35,22 +33,21 @@ export const WbsEditDialog = ({
     register,
   } = useForm<ResWbsData>();
   const handleSubmitAction: SubmitHandler<ResWbsData> = (wbs) => {
-    // wbs更新
-    updateWbsData(wbs);
-    // 編集ダイアログを閉じる
-    closeEditDialog();
+    // wbs新規追加
+    createWbsData(wbs);
+    // 新規追加ダイアログを閉じる
+    closeCreateDialog();
   };
 
   return (
     <Dialog
       open={open}
-      onClose={closeEditDialog}
+      onClose={closeCreateDialog}
       aria-labelledby='form-dialog-title'
     >
-      <DialogTitle id='form-dialog-title'>WBS編集</DialogTitle>
+      <DialogTitle id='form-dialog-title'>WBS新規追加</DialogTitle>
       <form onSubmit={handleSubmit(handleSubmitAction)}>
         <DialogContent className={classes.editDialog}>
-          <input type='hidden' value={wbsData.id} {...register('id')} />
           <Grid container>
             <Grid item xs={4}>
               <TextField
@@ -60,7 +57,6 @@ export const WbsEditDialog = ({
                 label='項目'
                 type='text'
                 fullWidth
-                defaultValue={wbsData.mainItem}
                 {...register('mainItem')}
               />
             </Grid>
@@ -73,7 +69,6 @@ export const WbsEditDialog = ({
                 label='中項目'
                 type='text'
                 fullWidth
-                defaultValue={wbsData.subItem}
                 {...register('subItem')}
               />
             </Grid>
@@ -89,7 +84,9 @@ export const WbsEditDialog = ({
                 label='開始日'
                 type='date'
                 fullWidth
-                defaultValue={wbsData.plansStartDay}
+                InputLabelProps={{
+                  shrink: true,
+                }}
                 {...register('plansStartDay')}
               />
             </Grid>
@@ -102,59 +99,13 @@ export const WbsEditDialog = ({
                 label='終了日'
                 type='date'
                 fullWidth
-                defaultValue={wbsData.plansFinishDay}
+                InputLabelProps={{
+                  shrink: true,
+                }}
                 {...register('plansFinishDay')}
               />
             </Grid>
             <Grid item xs={3} />
-            <Grid item xs={12} style={{ marginTop: '5px' }}>
-              <Chip label='実績' variant='outlined' color='primary' />
-            </Grid>
-            <Grid item xs={3}>
-              <TextField
-                autoFocus
-                margin='dense'
-                id='resultsStart'
-                label='開始日'
-                type='date'
-                fullWidth
-                defaultValue={wbsData.resultStartDay}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                {...register('resultStartDay')}
-              />
-            </Grid>
-            <Grid item xs={1} />
-            <Grid item xs={3}>
-              <TextField
-                autoFocus
-                margin='dense'
-                id='resultsFinish'
-                label='終了日'
-                type='date'
-                fullWidth
-                defaultValue={wbsData.resultsFinishDay}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                {...register('resultsFinishDay')}
-              />
-            </Grid>
-            <Grid item xs={1} />
-            <Grid item xs={2}>
-              <TextField
-                autoFocus
-                margin='dense'
-                id='progress'
-                label='進捗'
-                type='number'
-                fullWidth
-                defaultValue={wbsData.progress}
-                {...register('progress')}
-              />
-            </Grid>
-            <Grid item xs={2} />
             <Grid item xs={4}>
               <TextField
                 autoFocus
@@ -163,7 +114,6 @@ export const WbsEditDialog = ({
                 label='工数'
                 type='number'
                 fullWidth
-                defaultValue={wbsData.productionCost}
                 {...register('productionCost')}
               />
             </Grid>
@@ -176,7 +126,6 @@ export const WbsEditDialog = ({
                 label='担当者'
                 type='text'
                 fullWidth
-                defaultValue={wbsData.rep}
                 {...register('rep')}
               />
             </Grid>
@@ -184,7 +133,7 @@ export const WbsEditDialog = ({
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={closeEditDialog}
+            onClick={closeCreateDialog}
             variant='outlined'
             style={{ width: '150px' }}
           >
@@ -196,7 +145,7 @@ export const WbsEditDialog = ({
             style={{ width: '150px' }}
             type='submit'
           >
-            更新
+            追加
           </Button>
         </DialogActions>
       </form>

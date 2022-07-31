@@ -14,57 +14,36 @@ const useStyles = makeStyles({
   },
 });
 
-type WbsDeleteDialogProps = {
+type ResultDialogProps = {
   open: boolean;
-  deleteWbsData: (id: number) => Promise<void>;
-  closeDeleteDialog: () => void;
-  wbsId: number;
-  mainItem: string;
+  closeResultDialog: () => void;
+  actionResult: string;
 };
-export const WbsDeleteDialog = ({
+export const ResultDialog = ({
   open,
-  deleteWbsData,
-  closeDeleteDialog,
-  wbsId,
-  mainItem,
-}: WbsDeleteDialogProps): JSX.Element => {
+  closeResultDialog,
+  actionResult,
+}: ResultDialogProps): JSX.Element => {
   const classes = useStyles();
-
-  const deleteWbs = useCallback(() => {
-    //wbs削除
-    deleteWbsData(wbsId);
-    // ダイアログを閉じる
-    closeDeleteDialog();
-  }, [closeDeleteDialog, deleteWbsData, wbsId]);
 
   return (
     <Dialog
       open={open}
-      onClose={closeDeleteDialog}
+      onClose={closeResultDialog}
       aria-labelledby='form-dialog-title'
     >
-      <DialogTitle id='form-dialog-title'>削除確認</DialogTitle>
+      <DialogTitle id='form-dialog-title'>処理結果確認</DialogTitle>
       <DialogContent className={classes.deleteDialog}>
-        <DialogContentText>
-          {`${mainItem}を削除します。よろしいですか。`}
-        </DialogContentText>
+        <DialogContentText>{`${actionResult}が成功しました。`}</DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button
-          onClick={closeDeleteDialog}
+          onClick={closeResultDialog}
           color='primary'
           variant='contained'
           style={{ width: '120px' }}
         >
-          キャンセル
-        </Button>
-        <Button
-          onClick={deleteWbs}
-          color='secondary'
-          variant='contained'
-          style={{ width: '120px' }}
-        >
-          削除
+          OK
         </Button>
       </DialogActions>
     </Dialog>

@@ -38,30 +38,6 @@ export const NavBar = () => {
                 </Grid>
               </Grid>
             </Grid>
-            <Grid item xs={6}>
-              <Grid container justifyContent='flex-end'>
-                <Grid item>
-                  <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                    <NotificationBar>
-                      <Badge
-                        overlap='rectangular'
-                        badgeContent={10}
-                        color='error'
-                      >
-                        <Notifications />
-                      </Badge>
-                    </NotificationBar>
-                  </Box>
-                </Grid>
-                <Grid item>
-                  <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                    <IconButton>
-                      <AccountCircle />
-                    </IconButton>
-                  </Box>
-                </Grid>
-              </Grid>
-            </Grid>
           </Grid>
         </Toolbar>
       </AppBar>

@@ -55,11 +55,6 @@ export const SideMenu = ({
       text: 'WBS',
     },
     {
-      icon: <FormatListBulletedIcon />,
-      link: 'todo',
-      text: 'ToDoList',
-    },
-    {
       icon: <DateRangeIcon />,
       link: 'calendar',
       text: 'Schedule',
@@ -76,7 +71,7 @@ export const SideMenu = ({
       <List>
         {linkList.map((list) => {
           return (
-            <ListItem button>
+            <ListItem button key={list.text}>
               <ListItemIcon>{list.icon}</ListItemIcon>
               <ListItemText>
                 <Link
